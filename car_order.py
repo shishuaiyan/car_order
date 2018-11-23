@@ -98,6 +98,7 @@ def get_order_time(user_input_time):#传入user_input后半段(周|日等之后�
                         if order_time_start == order_time_end:
                             callback_print('时间范围错误')
                             return 1
+                        new_day_fun()
                         upgrade_order_list(int(order_time_start), int(order_time_end))#-1
                         return 0
                     else:
@@ -261,7 +262,17 @@ def start_end2list(start, end):
     return start_end_list
 
 
-
+def new_day_fun():
+    global order_list
+    if order_list[0][0] == datetime.date.today():
+        pass
+    elif order_list[0][0] == datetime.date.today()-oneday:
+        print('Debug msg: new_day_fun')
+        order_list.append([datetime.date.today()+datetime.timedelta(days=7), work_hours])
+        del order_list[0]
+        write_order_list_logs()
+    else:
+        pass
 
 
 
@@ -417,6 +428,7 @@ while(1):
             
         
         elif(user_input_split[1] == '查询'):#用regular expression匹配用户输入
+            new_day_fun()
             checkout_str = ''
 #            ordered_hours = 0#当天预定时间计数  一天预约了几个小时  int
 #            hours_user = {}#新建一个字典存放当天被预约的时间及人  dict
