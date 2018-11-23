@@ -441,7 +441,7 @@ if __name__ == '__main__':
     init_order_list(datetime.date.today())
     make_directory(os.getcwd(), 'log')
     
-    itchat.auto_login()
+    itchat.auto_login(enableCmdQR=2)#命令行显示二维码
     itchat.run()
 
 
