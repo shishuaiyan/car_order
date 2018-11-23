@@ -67,8 +67,8 @@ def get_order_time(user_input_time):#传入user_input后半段(周|日等之后�
                     order_time_end = re.search(r'\d\d|\d', user_input_time[input_end_temp.span()[0]:]).group()
                     if(EARLIEST_HOUR <= int(order_time_end) <= LAST_HOUR):
                         print('Debug fun msg 2', 'order_time_end: ', order_time_end)
-                        print('Debug fun msg: ', order_date)
-                        if order_time_start == order_time_end:
+                        print('Debug fun msg order_date: ', order_date)
+                        if int(order_time_start) >= int(order_time_end):
                             callback_print('时间范围错误')
                             return 1
                         new_day_fun()
@@ -96,20 +96,19 @@ def get_order_time(user_input_time):#传入user_input后半段(周|日等之后�
 
 def init_order_list(today):
     global order_list
-    if(os.path.isdir(order_list_log_path)):
-        if(os.path.exists(order_list_log_path+'/order_list_logs.txt')):
-            print('loading order list log....')
-            f = open(order_list_log_path+'/order_list_logs.txt', 'r')
-            order_list = eval(f.read())
-            f.close()
-            print('The roder_list_logs load compele~~~')
-        else:
-            print('Debug fun msg: ', '91')
+    if os.path.isdir(order_list_log_path) and os.path.exists(order_list_log_path+'/order_list_logs.txt'):
+        print('loading order list log....')
+        f = open(order_list_log_path+'/order_list_logs.txt', 'r')
+        order_list = eval(f.read())
+        f.close()
+        print('The roder_list_logs load compele~~~')
     else:
         for i in range(MAX_ORDER_DAYS+1):
             order_list.append([today])
             order_list[i].append(copy.deepcopy(work_hours))#深拷贝
             today += oneday
+        make_directory(os.getcwd(), 'log')
+        write_order_list_logs()
 
 
 #def upgrade_order_list(order_time_start, order_time_end):#type: (class<date>, class<date>, int, int)
@@ -178,7 +177,7 @@ def make_directory(path, name):
             os.mkdir(os.path.join(path, name))
         print('文件夹创建成功,路径：{}'.format(os.path.join(path, name)))
     else:
-        print('路径输入错误')
+        print('路径错误')
 
 
 def write_order_list_logs():
@@ -190,7 +189,7 @@ def write_order_list_logs():
 def callback_print(callback_str):
     #print('Callback msg: ', callback_str)
     itchat.send_msg(callback_str, user_id)
-    time.sleep(1)
+    time.sleep(0.5)
 
 search_result = ''
 def remarkName2nickName(remark_name):
@@ -216,15 +215,14 @@ def start_end2list(start, end):
 
 def new_day_fun():
     global order_list
-    if order_list[0][0] == datetime.date.today():
-        pass
-    elif order_list[0][0] == datetime.date.today()-oneday:
-        print('Debug msg: new_day_fun')
-        order_list.append([datetime.date.today()+datetime.timedelta(days=7), work_hours])
-        del order_list[0]
+    diff_days = (datetime.date.today()-order_list[0][0]).days
+    order_list_last_day = order_list[-1][0]
+    if diff_days:
+        for diff_day in range(diff_days):
+            print('Debug msg: new_day_fun')
+            order_list.append([order_list_last_day+datetime.timedelta(days=diff_day+1), work_hours])
+            del order_list[0]
         write_order_list_logs()
-    else:
-        pass
 
 
 
@@ -325,7 +323,8 @@ def reply_msg(msg):
                     except(ValueError):
                         callback_print('请输入一个合法日期')
                         #print('Callback msg 4: ', '请输入一个合法日期')
-                    
+            else:
+                callback_print('请正确输入')
                     
                 
         elif(user_input == '取消预约'):
@@ -439,9 +438,9 @@ def reply_msg(msg):
 if __name__ == '__main__':
     #initation order_list and log
     init_order_list(datetime.date.today())
-    make_directory(os.getcwd(), 'log')
     
-    itchat.auto_login(enableCmdQR=2)#命令行显示二维码
+    itchat.auto_login()
+#    itchat.auto_login(enableCmdQR=2)#命令行显示二维码
     itchat.run()
 
 
