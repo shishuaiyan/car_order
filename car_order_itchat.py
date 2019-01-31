@@ -439,8 +439,8 @@ if __name__ == '__main__':
     #initation order_list and log
     init_order_list(datetime.date.today())
     
-    itchat.auto_login()
-#    itchat.auto_login(enableCmdQR=2)#命令行显示二维码
+#    itchat.auto_login()
+    itchat.auto_login(enableCmdQR=2)#命令行显示二维码
     itchat.run()
 
 
