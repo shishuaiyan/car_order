@@ -8,6 +8,7 @@ This is a temporary script file.
 import re, datetime, copy, os, itchat, time
 
 
+
 MAX_ORDER_DAYS = 7
 EARLIEST_HOUR = 5
 LAST_HOUR = 22
@@ -220,7 +221,7 @@ def new_day_fun():
     if diff_days:
         for diff_day in range(diff_days):
             print('Debug msg: new_day_fun')
-            order_list.append([order_list_last_day+datetime.timedelta(days=diff_day+1), work_hours])
+            order_list.append([order_list_last_day+datetime.timedelta(days=diff_day+1), copy.deepcopy(work_hours)])
             del order_list[0]
         write_order_list_logs()
 
@@ -274,9 +275,9 @@ def reply_msg(msg):
                             judge_order_date(today, order_date)
                             get_order_time(user_input[order_date_week.span()[1]+1:])
                             break
-                    if(weekday[i] == 7):
-                        callback_print('请正确输入(mode 周)')
-                        #print('Callback msg 2: ', '请正确输入(mode 周)')
+#                    if(weekday[i] == 7):
+#                        callback_print('请正确输入(mode 周)')#===================================已知bug：会同时出现“请正确输入（mode 周）”和预约成功
+#                        #print('Callback msg 2: ', '请正确输入(mode 周)')
                         
             elif(order_date_tomo):#input mode two: 今天|明天|后天|大后天
                 if(order_date_tomo.group() == '今天'):
@@ -442,6 +443,9 @@ if __name__ == '__main__':
     itchat.auto_login()
 #    itchat.auto_login(enableCmdQR=2)#命令行显示二维码
     itchat.run()
+#    print('after itchat.run')#程序在itchat.run循环，logout后打印
+
+    
 
 
 
