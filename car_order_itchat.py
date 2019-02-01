@@ -245,7 +245,6 @@ def reply_msg(msg):
     
     if users_flag:#判断用户是否在用户列表中
         if user_input == u'你好':
-            print("接收消息: ", msg['Content'])
             itchat.send_msg(msg['User']['NickName'] + "你好啊！", msg['FromUserName'])
         
         
@@ -441,8 +440,8 @@ if __name__ == '__main__':
     #initation order_list and log
     init_order_list(datetime.date.today())
     
-    itchat.auto_login()
-#    itchat.auto_login(enableCmdQR=2)#命令行显示二维码
+#    itchat.auto_login()
+    itchat.auto_login(enableCmdQR=2)#命令行显示二维码
     itchat.run()
 #    print('after itchat.run')#程序在itchat.run循环，logout后打印
 
