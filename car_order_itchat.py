@@ -220,7 +220,7 @@ def new_day_fun():
     order_list_last_day = order_list[-1][0]
     if diff_days:
         for diff_day in range(diff_days):
-            print('Debug msg: new_day_fun')
+            print('Debug msg: new_day_fun 日期更新中')
             order_list.append([order_list_last_day+datetime.timedelta(days=diff_day+1), copy.deepcopy(work_hours)])
             del order_list[0]
         write_order_list_logs()
@@ -236,6 +236,7 @@ def reply_msg(msg):
     user_remarkname = msg['User']['RemarkName']
     today = datetime.date.today()
     user_input = msg['Content']
+    print('来自"{}"的消息: {}'.format(user_nickname, user_input))
     if car_order_users_Regex.match(user_remarkname):
         users_flag = True
     else:
@@ -244,7 +245,7 @@ def reply_msg(msg):
     
     if users_flag:#判断用户是否在用户列表中
         if user_input == u'你好':
-            print("接收消息", msg)
+            print("接收消息: ", msg['Content'])
             itchat.send_msg(msg['User']['NickName'] + "你好啊！", msg['FromUserName'])
         
         
@@ -440,8 +441,8 @@ if __name__ == '__main__':
     #initation order_list and log
     init_order_list(datetime.date.today())
     
-#    itchat.auto_login()
-    itchat.auto_login(enableCmdQR=2)#命令行显示二维码
+    itchat.auto_login()
+#    itchat.auto_login(enableCmdQR=2)#命令行显示二维码
     itchat.run()
 #    print('after itchat.run')#程序在itchat.run循环，logout后打印
 
